@@ -258,7 +258,7 @@
   branch = "master"
   name = "github.com/hashicorp/yamux"
   packages = ["."]
-  revision = "2658be15c5f05e76244154714161f17e3e77de2e"
+  revision = "7221087c3d281fda5f794e28c2ea4c6e4d5c4558"
 
 [[projects]]
   name = "github.com/inconshreveable/log15"
@@ -501,6 +501,8 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = [
+    "ed25519",
+    "ed25519/internal/edwards25519",
     "md4",
     "pbkdf2"
   ]
@@ -665,6 +667,16 @@
   version = "v2.3.2"
 
 [[projects]]
+  name = "gopkg.in/square/go-jose.v2"
+  packages = [
+    ".",
+    "cipher",
+    "json"
+  ]
+  revision = "ef984e69dd356202fd4e4910d4d9c24468bdf0b8"
+  version = "v2.1.9"
+
+[[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
@@ -673,6 +685,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "81a37e747b875cf870c1b9486fa3147e704dea7db8ba86f7cb942d3ddc01d3e3"
+  inputs-digest = "aa309b39fdda94ff3bf5d7013a922cfc9fc8fb5940280b92f63c802f65f3ddce"
   solver-name = "gps-cdcl"
   solver-version = 1
