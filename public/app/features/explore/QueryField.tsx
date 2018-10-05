@@ -5,9 +5,6 @@ import { Change, Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 
-import { findMatchesInText } from 'app/core/utils/text';
-import { TextMatch } from 'app/types/explore';
-
 import ClearPlugin from './slate-plugins/clear';
 import NewlinePlugin from './slate-plugins/newline';
 
@@ -72,10 +69,6 @@ export interface Suggestion {
    * Number of steps to move after the insertion, can be negative.
    */
   move?: number;
-  /**
-   *
-   */
-  matches?: TextMatch[];
 }
 
 export interface SuggestionGroup {
@@ -111,7 +104,7 @@ interface TypeaheadFieldProps {
   onValueChanged?: (value: Value) => void;
   onWillApplySuggestion?: (suggestion: string, state: TypeaheadFieldState) => string;
   placeholder?: string;
-  portalPrefix?: string;
+  portalOrigin?: string;
   syntax?: string;
 }
 
@@ -257,13 +250,6 @@ class QueryField extends React.PureComponent<TypeaheadFieldProps, TypeaheadField
               }
               // Filter out the already typed value (prefix) unless it inserts custom text
               group.items = group.items.filter(c => c.insertText || (c.filterText || c.label) !== prefix);
-              // Augment suggestions with prefix match positions based on label text
-              group.items = group.items.map(c => {
-                const matches = findMatchesInText(c.label, prefix);
-                // Only first match is needed when matching label prefix
-                c.matches = group.prefixMatch ? matches.slice(0, 1) : matches;
-                return c;
-              });
             }
 
             if (!group.skipSort) {
@@ -467,8 +453,8 @@ class QueryField extends React.PureComponent<TypeaheadFieldProps, TypeaheadField
   };
 
   renderMenu = () => {
-    const { portalPrefix } = this.props;
-    const { suggestions, typeaheadIndex } = this.state;
+    const { portalOrigin } = this.props;
+    const { suggestions, typeaheadIndex, typeaheadPrefix } = this.state;
     if (!hasSuggestions(suggestions)) {
       return null;
     }
@@ -477,11 +463,12 @@ class QueryField extends React.PureComponent<TypeaheadFieldProps, TypeaheadField
 
     // Create typeahead in DOM root so we can later position it absolutely
     return (
-      <Portal prefix={portalPrefix}>
+      <Portal origin={portalOrigin}>
         <Typeahead
           menuRef={this.menuRef}
           selectedItem={selectedItem}
           onClickItem={this.onClickMenu}
+          prefix={typeaheadPrefix}
           groupedItems={suggestions}
         />
       </Portal>
@@ -508,14 +495,14 @@ class QueryField extends React.PureComponent<TypeaheadFieldProps, TypeaheadField
   }
 }
 
-class Portal extends React.PureComponent<{ index?: number; prefix: string }, {}> {
+class Portal extends React.PureComponent<{ index?: number; origin: string }, {}> {
   node: HTMLElement;
 
   constructor(props) {
     super(props);
-    const { index = 0, prefix = 'query' } = props;
+    const { index = 0, origin = 'query' } = props;
     this.node = document.createElement('div');
-    this.node.classList.add(`slate-typeahead`, `slate-typeahead-${prefix}-${index}`);
+    this.node.classList.add(`slate-typeahead`, `slate-typeahead-${origin}-${index}`);
     document.body.appendChild(this.node);
   }
 

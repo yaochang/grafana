@@ -77,6 +77,9 @@
   .typeahead-match {
     color: $typeahead-selected-color;
     border-bottom: 1px solid $typeahead-selected-color;
+    // Undoing mark styling
+    padding: inherit;
+    background: inherit;
   }
 }
 

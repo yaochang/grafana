@@ -145,7 +145,7 @@ interface PromQueryFieldProps {
   onClickHintFix?: (action: any) => void;
   onPressEnter?: () => void;
   onQueryChange?: (value: string, override?: boolean) => void;
-  portalPrefix?: string;
+  portalOrigin?: string;
   request?: (url: string) => any;
   supportsLogs?: boolean; // To be removed after Logging gets its own query field
 }
@@ -584,7 +584,7 @@ class PromQueryField extends React.PureComponent<PromQueryFieldProps, PromQueryF
               onWillApplySuggestion={willApplySuggestion}
               onValueChanged={this.onChangeQuery}
               placeholder="Enter a PromQL query"
-              portalPrefix="prometheus"
+              portalOrigin="prometheus"
             />
           </div>
           {error ? <div className="prom-query-field-info text-error">{error}</div> : null}
