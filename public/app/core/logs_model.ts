@@ -11,7 +11,7 @@ export enum LogLevel {
 export interface LogSearchMatch {
   start: number;
   length: number;
-  text?: string;
+  text: string;
 }
 
 export interface LogRow {

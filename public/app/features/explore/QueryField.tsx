@@ -5,6 +5,9 @@ import { Change, Value } from 'slate';
 import { Editor } from 'slate-react';
 import Plain from 'slate-plain-serializer';
 
+import { findMatchesInText } from 'app/core/utils/text';
+import { TextMatch } from 'app/types/explore';
+
 import ClearPlugin from './slate-plugins/clear';
 import NewlinePlugin from './slate-plugins/newline';
 
@@ -69,6 +72,10 @@ export interface Suggestion {
    * Number of steps to move after the insertion, can be negative.
    */
   move?: number;
+  /**
+   *
+   */
+  matches?: TextMatch[];
 }
 
 export interface SuggestionGroup {
@@ -250,6 +257,13 @@ class QueryField extends React.PureComponent<TypeaheadFieldProps, TypeaheadField
               }
               // Filter out the already typed value (prefix) unless it inserts custom text
               group.items = group.items.filter(c => c.insertText || (c.filterText || c.label) !== prefix);
+              // Augment suggestions with prefix match positions based on label text
+              group.items = group.items.map(c => {
+                const matches = findMatchesInText(c.label, prefix);
+                // Only first match is needed when matching label prefix
+                c.matches = group.prefixMatch ? matches.slice(0, 1) : matches;
+                return c;
+              });
             }
 
             if (!group.skipSort) {

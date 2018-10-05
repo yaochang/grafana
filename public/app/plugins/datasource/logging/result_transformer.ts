@@ -2,6 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { LogLevel, LogsModel, LogRow } from 'app/core/logs_model';
+import { findMatchesInText } from 'app/core/utils/text';
 
 export function getLogLevel(line: string): LogLevel {
   if (!line) {
@@ -19,25 +20,6 @@ export function getLogLevel(line: string): LogLevel {
   return level;
 }
 
-export function getSearchMatches(line: string, search: string) {
-  // Empty search can send re.exec() into infinite loop, exit early
-  if (!line || !search) {
-    return [];
-  }
-  const regexp = new RegExp(`(?:${search})`, 'g');
-  const matches = [];
-  let match = regexp.exec(line);
-  while (match) {
-    matches.push({
-      text: match[0],
-      start: match.index,
-      length: match[0].length,
-    });
-    match = regexp.exec(line);
-  }
-  return matches;
-}
-
 export function processEntry(entry: { line: string; timestamp: string }, stream): LogRow {
   const { line, timestamp } = entry;
   const { labels } = stream;
@@ -45,7 +27,7 @@ export function processEntry(entry: { line: string; timestamp: string }, stream)
   const time = moment(timestamp);
   const timeFromNow = time.fromNow();
   const timeLocal = time.format('YYYY-MM-DD HH:mm:ss');
-  const searchMatches = getSearchMatches(line, stream.search);
+  const searchMatches = findMatchesInText(line, stream.search);
   const logLevel = getLogLevel(line);
 
   return {

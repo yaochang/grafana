@@ -1,5 +1,6 @@
 import React from 'react';
 
+import MatchedText from './MatchedText';
 import { Suggestion, SuggestionGroup } from './QueryField';
 
 function scrollIntoView(el: HTMLElement) {
@@ -40,9 +41,10 @@ class TypeaheadItem extends React.PureComponent<TypeaheadItemProps, {}> {
   render() {
     const { isSelected, item } = this.props;
     const className = isSelected ? 'typeahead-item typeahead-item__selected' : 'typeahead-item';
+    const { label, matches } = item;
     return (
       <li ref={this.getRef} className={className} onClick={this.onClick}>
-        {item.detail || item.label}
+        <MatchedText text={label} matches={matches} matchClassName="typeahead-match" />
         {item.documentation && isSelected ? <div className="typeahead-item-hint">{item.documentation}</div> : null}
       </li>
     );
